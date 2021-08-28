@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("C:/Users/A/Downloads/book (3).csv",encoding='latin-1')
+
+df.head()
+
+
+df1=df.rename(columns={"User.ID":"UserId","Book.Title":"title","Book.Rating":"rating"})
+
+df1
+
+df1.columns
+
+len(df1.UserId.unique())
+
+len(df1.title.unique())
+
+df2=df1.drop_duplicates(['UserId'])
+
+book =df2.pivot(index='UserId',
+                                 columns='title',
+                                 values='rating').reset_index(drop=True)
+
+book
+
+df2.index = df1.UserId.unique()
+
+book
+
+book.fillna(0, inplace=True)
+
+book
+
+#Calculating Cosine Similarity between Users
+from sklearn.metrics import pairwise_distances
+from scipy.spatial.distance import cosine, correlation
+
+user_sim = 1 - pairwise_distances( book.values,metric='cosine')
+
+user_sim
+
+#Store the results in a dataframe
+user_sim_df = pd.DataFrame(user_sim)
+
+user_sim_df.index = df2.UserId.unique()
+user_sim_df.columns = df2.UserId.unique()
+
+user_sim_df.iloc[0:5, 0:5]
+
+np.fill_diagonal(user_sim, 0)
+user_sim_df.iloc[0:5, 0:5]
+
+user_sim_df.idxmax(axis=1)[0:5]
+
+df2[(df2['UserId']==276726) | (df2['UserId']==276744)]
+
+user_1=df1[df1['UserId']==276736]
+
+user_2=df1[df1['UserId']==276744]
+
+user_2.title
+
+user_1.title
+
+pd.merge(user_1,user_2,on='title',how='outer')
+
